@@ -59,6 +59,10 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
 .looks img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px}
 .looks span{display:block;font:600 13px var(--body);margin-top:6px}
 
+.offer{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font:700 18px var(--display)}
+.offer strong{font:800 28px/1 var(--display);color:var(--ink)}
+.offer b{font:800 28px/1 var(--display);color:var(--price);font-variant-numeric:tabular-nums}
+.unit s{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -94,11 +98,11 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
 </div>
 <h2 class="sec" id="deals">عروض اليوم</h2>
 <a class="prod" href="../../thai/">
-  <div class="ph"><img src="../../thai/c1.jpg" alt="ألوان حجاب المودال التايلندي" loading="lazy"><span class="chip">-42%</span><span class="gift">🎁 قطعتين هدية</span></div>
+  <div class="ph"><img src="../../img/trio.jpg" alt="محجبات بحجاب مودال تايلندي" loading="lazy"><span class="chip">-42%</span><span class="gift">🎁 قطعتين هدية</span></div>
   <div class="body">
     <h3>حجاب مودال تايلندي</h3>
-    <div class="price"><strong>25,000</strong><em>دينار</em><s>43,000</s></div>
-    <div class="unit">لـ 5 قطع، يعني القطعة بـ 5,000 دينار</div>
+    <div class="offer"><strong>5 قطع</strong><span>بـ <b>25,000</b> دينار</span></div>
+    <div class="unit">بدل <s>43,000</s> · يعني القطعة بـ 5,000 دينار بس</div>
     <div class="ladder"><div class="best">5 قطع 25,000</div><div>4 قطع 22,000</div><div>3 قطع 18,000</div><div>قطعتين 14,000</div><div>قطعة 8,000</div></div>
     <div class="dots" id="dots-thai"></div>
     <span class="btn">اختاري ألوانك</span>
@@ -108,8 +112,8 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
   <div class="ph"><img src="../../salaty/salaty.jpg" alt="ألوان طقم الصلاة Salaty" loading="lazy"><span class="chip">-33%</span></div>
   <div class="body">
     <h3>طقم الصلاة Salaty</h3>
-    <div class="price"><strong>20,000</strong><em>دينار</em><s>30,000</s></div>
-    <div class="unit">الطقم مع شنطته</div>
+    <div class="offer"><strong>الطقم</strong><span>بـ <b>20,000</b> دينار</span></div>
+    <div class="unit">بدل <s>30,000</s> · مع شنطته</div>
     <div class="ladder"><div class="best">3 أطقم 50,000</div><div>طقمين 35,000</div><div>طقم 20,000</div></div>
     <div class="dots" id="dots-salaty"></div>
     <span class="btn">اختاري ألوانك</span>

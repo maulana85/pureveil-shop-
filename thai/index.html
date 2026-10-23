@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://maulana85.github.io/pureveil-shop-/thai/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#a3122a">
+<meta name="theme-color" content="#2b1426">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
@@ -114,21 +114,29 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .cur{text-align:center;font:600 13px var(--display);color:var(--accent);margin:-6px 0 -4px}
 .tier strong{white-space:nowrap}
 .tier strong i{display:block;font:500 11px/1.2 var(--body);font-style:normal;color:var(--muted)}
+.hero2{position:relative;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+.hero2 img{display:block;width:100%;aspect-ratio:5/4;object-fit:cover;object-position:50% 30%}
+.hero2 .cap{position:absolute;inset:auto 0 0 0;padding:70px 18px 16px;background:linear-gradient(180deg,rgba(43,20,38,0),rgba(43,20,38,.86) 60%);color:#fff;display:grid;gap:6px;justify-items:start}
+.hero2 .bf{background:#fff;color:#2b1426;font:700 12.5px/1 var(--display);border-radius:999px;padding:7px 11px}
+.hero2 h1{margin:0;font:800 27px/1.2 var(--display)}
+.hero2 p{margin:0;font:500 14.5px/1.5 var(--body);color:#fbeff3}
+.infobar{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font:600 12.5px var(--body);color:var(--muted);padding:10px 0 0}
 </style>
 </head>
 <body>
 <div class="wrap" id="app">
-  <section class="hero">
-    <span class="tag">🔥 BLACK FRIDAY · بلّشت الخصومات</span>
-    <span class="iq"><svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#000"/><rect width="30" height="13.33" fill="#fff"/><rect width="30" height="6.67" fill="#ce1126"/><text x="15" y="12.2" text-anchor="middle" font-size="4.6" font-weight="700" fill="#007a3d" font-family="Tahoma,Arial">الله أكبر</text></svg> متوفر بالعراق · توصيل لكل المحافظات</span>
-    <h1>5 قطع حجاب تايلندي بـ 25,000 دينار بس</h1>
-    <p>كنا نبيع 3 قطع بـ 25,000، واليوم 5 قطع بنفس السعر، يعني <b style="color:#ffe082">قطعتين هدية</b>. مودال تايلندي ناعم وثابت بـ 48 لون، والخصم على الكمية الموجودة بس.</p>
-    <div class="timer" id="timer">⚡ الخصم على الكمية الموجودة بالمستودع بس، والألوان عم تخلص</div>
+  <section class="hero2">
+    <img src="../img/trio.jpg" alt="ثلاث محجبات بحجابات مودال بألوان ترابية">
+    <div class="cap">
+      <span class="bf">🔥 BLACK FRIDAY · 🇮🇶 العراق</span>
+      <h1>5 قطع تايلندي بـ 25,000 دينار</h1>
+      <p>كانت 3 قطع بنفس السعر، يعني قطعتين هدية. مودال ناعم وثابت، اختاري من 48 لون.</p>
+    </div>
   </section>
+  <div class="infobar"><span>🚚 توصيل لكل المحافظات</span><span>💵 الدفع عند الاستلام</span><span>⚡ على الكمية الموجودة بس</span></div>
 
   <div class="cur">الأسعار بالدينار العراقي 🇮🇶</div>
   <div class="ladder" id="ladder"></div>
-  <div class="perks"><span>🚚 توصيل لكل المحافظات</span><span>💵 الدفع عند الاستلام</span><span>🎨 48 لون</span></div>
   <div class="how"><b>١</b> اكبسي على اللون <b>٢</b> عبّي عنوانك <b>٣</b> أكّدي الطلب</div>
 
   <section class="card">
@@ -189,7 +197,7 @@ const params = new URLSearchParams(location.search);
 const unit = q => q === 1 ? 'قطعة' : q === 2 ? 'قطعتين' : q + ' قطع';
 $('ladder').classList.add('five');
 $('ladder').innerHTML = [5, 1, 2, 3, 4].map(q => q === G
-  ? `<div class="tier best"><b>${unit(q)}</b><span><strong>${fmt(NEW[q])}</strong> <s>${fmt(OLD[q])}</s></span><small>وفّري ${fmt(OLD[q] - NEW[q])}</small></div>`
+  ? `<div class="tier best"><b>${unit(q)}</b><span><strong>${fmt(NEW[q])}</strong> <s>${OLD[q].toLocaleString('en-US')}</s></span><small>وفّري ${fmt(OLD[q] - NEW[q])}</small></div>`
   : `<div class="tier"><b>${unit(q)}</b><s>${fmt(OLD[q])}</s><strong>${NEW[q].toLocaleString('en-US')}<i>دينار</i></strong></div>`).join('');
 $('gov').innerHTML = '<option value="">اختاري…</option>' + GOVS.map(g => `<option>${g}</option>`).join('');
 
