@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>حجاب مودال تايلندي | 5 قطع بـ 25,000</title>
-<meta name="description" content="بلاك فرايدي: 5 قطع حجاب مودال تايلندي بـ 25,000 بس. 48 لون، اختاري ألوانك واطلبي بكبسة، والدفع عند الاستلام.">
+<title>حجاب مودال تايلندي | 4 قطع بـ 25,000</title>
+<meta name="description" content="بلاك فرايدي: 4 قطع حجاب مودال تايلندي بـ 25,000 بس. 48 لون، اختاري ألوانك واطلبي بكبسة، والدفع عند الاستلام.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ar_IQ">
 <meta property="og:site_name" content="Pure Veil">
 <meta property="og:title" content="حجاب تايلندي · اطلبي من هنا 👆">
-<meta property="og:description" content="كانت 3 قطع بـ 25,000، اليوم 5 قطع بنفس السعر: قطعتين هدية. 48 لون والدفع عند الاستلام 👇">
+<meta property="og:description" content="كانت 3 قطع بـ 25,000، اليوم 4 قطع بنفس السعر: الرابعة هدية. 48 لون والدفع عند الاستلام 👇">
 <meta property="og:image" content="https://pureveiliq.com/thai/og2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -100,6 +100,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .ladder.five .tier.best{grid-column:1/-1;grid-template-columns:auto 1fr auto;align-items:center;text-align:start;padding:12px 14px;gap:10px;background:var(--accent-soft)}
 .ladder.five .tier.best strong{font-size:22px}
 .ladder.five .tier.best::before{content:"الأوفر · قطعتين هدية"}
+.ladder.four{grid-template-columns:repeat(3,1fr)}
+.ladder.four .tier.best::before{content:"الأوفر · الرابعة هدية"}
 .sub{font:600 13px var(--display);color:var(--muted);padding:10px 14px 6px;margin:0}
 .photo + .sub{border-top:1px solid var(--line)}
 .no{position:absolute;right:5px;bottom:5px;min-width:26px;height:26px;padding:0 5px;border-radius:999px;background:#6e3b5e;color:#fff;border:2px solid #fff;font:700 13px/22px var(--display);text-align:center;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.3);direction:ltr}
@@ -134,6 +136,11 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .done dl{width:100%;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
 .done .cod{font:800 18px var(--display);color:var(--ok)}
 .done .tip{margin:4px 0 0;background:#fff7e0;border-radius:12px;padding:12px;font-weight:600;width:100%}
+.others{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);padding-top:4px}
+.others a{color:var(--ink);text-decoration:none;border:1px dashed var(--line);border-radius:999px;padding:2px 9px}
+.others u{color:var(--accent);text-decoration:none;font-weight:600;margin-inline-start:4px}
+.more{display:block;margin:0 14px 14px;padding:11px 12px;border:1.5px dashed var(--accent);border-radius:12px;color:var(--accent);text-align:center;font-weight:700;text-decoration:none;font-size:14px}
+.sum .ln{font-size:13px;color:var(--muted);gap:10px}.sum .ln span:last-child{text-align:left}
 [hidden]{display:none !important}
 </style>
 </head>
@@ -143,8 +150,8 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <img src="../img/trio.jpg" alt="ثلاث محجبات بحجابات مودال بألوان ترابية">
     <div class="cap">
       <span class="bf">🔥 BLACK FRIDAY · 🇮🇶 العراق</span>
-      <h1>5 قطع تايلندي بـ 25,000 دينار</h1>
-      <p>كانت 3 قطع بنفس السعر، يعني قطعتين هدية. مودال ناعم وثابت، اختاري من 48 لون.</p>
+      <h1>4 قطع تايلندي بـ 25,000 دينار</h1>
+      <p>كانت 3 قطع بنفس السعر، يعني الرابعة هدية. مودال ناعم وثابت، اختاري من 48 لون.</p>
     </div>
   </section>
   <div class="infobar"><span>🚚 توصيل لكل المحافظات</span><span>💵 الدفع عند الاستلام</span><span>⚡ على الكمية الموجودة بس</span></div>
@@ -157,6 +164,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <div class="loading" id="loading">جاري التأكد من الكميات المتوفرة…</div>
     <div id="photos"></div>
     <div class="picked" id="picked"></div>
+    <a class="more" id="more" href="../" hidden>➕ بدك صنف ثاني كمان؟ ارجعي للأصناف، والتوصيل بيضل مرة وحدة</a>
   </section>
 
   <form id="f" novalidate>
@@ -182,12 +190,13 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="../cart.js"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
 const MODEL = 'IQ-TH';
-// Prices: index = pieces in a group of up to 5. OLD = the previous price list (1=10k, 2=18k, 3=25k, 4=3+1, 5=3+2).
-const NEW = [0, 8000, 14000, 18000, 22000, 25000], OLD = [0, 10000, 18000, 25000, 35000, 43000], DELIVERY = 5000;
-const G = 5;
+// Prices: index = pieces in a group of up to 4. OLD = the previous price list (1=10k, 2=18k, 3=25k, 4=3+1).
+const NEW = [0, 8000, 14000, 20000, 25000], OLD = [0, 10000, 18000, 25000, 35000], DELIVERY = 5000;
+const G = 4;
 const LOW_AT = 3;
 // Piece rectangles measured on the 1591×989 photos (column x-edges, row y-edges). Numbers: right column bottom→top first.
 const W = 1591, H = 989, COLS = [20, 540, 1045, 1575];
@@ -202,13 +211,13 @@ const GOVS = ['بغداد','البصرة','نينوى (الموصل)','أربي�
 const $ = id => document.getElementById(id);
 const fmt = n => n.toLocaleString('en-US') + ' دينار';
 const priceOf = (t, q) => Math.floor(q / G) * t[G] + t[q % G];
-const sel = {};          // color -> qty chosen
+const sel = PVCart.get(MODEL);          // color -> qty chosen
 let stock = null;        // color -> available, null until loaded
 const params = new URLSearchParams(location.search);
 
 const unit = q => q === 1 ? 'قطعة' : q === 2 ? 'قطعتين' : q + ' قطع';
-$('ladder').classList.add('five');
-$('ladder').innerHTML = [5, 1, 2, 3, 4].map(q => q === G
+$('ladder').classList.add('five', 'four');
+$('ladder').innerHTML = [4, 1, 2, 3].map(q => q === G
   ? `<div class="tier best"><b>${unit(q)}</b><span><strong>${fmt(NEW[q])}</strong> <s>${OLD[q].toLocaleString('en-US')}</s></span><small>وفّري ${fmt(OLD[q] - NEW[q])}</small></div>`
   : `<div class="tier"><b>${unit(q)}</b><s>${fmt(OLD[q])}</s><strong>${NEW[q].toLocaleString('en-US')}<i>دينار</i></strong></div>`).join('');
 $('gov').innerHTML = '<option value="">اختاري…</option>' + GOVS.map(g => `<option>${g}</option>`).join('');
@@ -258,21 +267,23 @@ function render() {
     const m = b.querySelector('.minus');
     if (m) m.onclick = ev => { ev.stopPropagation(); sel[n]--; if (!sel[n]) delete sel[n]; render(); };
   });
+  PVCart.set(MODEL, sel);
   const nums = Object.keys(sel).map(Number).sort((a, b) => a - b);
-  $('picked').innerHTML = nums.map(n => `<span class="chip">لون ${n} × ${sel[n]}</span>`).join('');
-  const q = nums.reduce((s, n) => s + sel[n], 0), p = priceOf(NEW, q), o = priceOf(OLD, q);
-  $('cnt').textContent = q ? `اخترتي ${q}` : '';
-  $('go').hidden = !q;
-  $('barTxt').textContent = q ? `${unit(q)} · ${fmt(p + DELIVERY)}` : 'ما اخترتي ولا لون';
-  const left = G - (q % G);
-  const leftTxt = left === 1 ? 'قطعة وحدة' : left === 2 ? 'قطعتين' : left + ' قطع';
-  $('nudge').textContent = !q ? 'اكبسي على اللون اللي بيعجبك' : q % G
-    ? `زيدي ${leftTxt} بـ ${fmt(priceOf(NEW, q + left) - p)} بس 🎁`
-    : `وفّرتي ${fmt(o - p)} 🎉`;
-  $('sum').innerHTML = `<div><span>القطع (${q})</span><span><s>${q ? fmt(o) : ''}</s> ${fmt(p)}</span></div>`
-    + (q ? `<div class="save"><span>خصم البلاك فرايدي</span><span>− ${fmt(o - p)}</span></div>` : '')
-    + `<div><span>التوصيل</span><span>${fmt(DELIVERY)}</span></div><div class="tot"><span>المجموع عند الاستلام</span><span>${fmt(p + DELIVERY)}</span></div>`;
+  $('picked').innerHTML = nums.map(n => `<span class="chip">لون ${n} × ${sel[n]}</span>`).join('') + PVCart.othersHTML(MODEL);
+  const mine = nums.reduce((s, n) => s + sel[n], 0), T = PVCart.totals();
+  $('cnt').textContent = mine ? `اخترتي ${mine}` : '';
+  $('more').hidden = !T.qty;
+  $('go').hidden = !T.qty;
+  $('barTxt').textContent = T.qty ? `${T.label} · ${PVCart.fmt(T.cod)}` : 'ما اخترتي ولا لون';
+  $('nudge').textContent = PVCart.nudge(MODEL);
+  $('sum').innerHTML = PVCart.sumHTML();
 }
+
+// Keep this page in step with the cart when the customer comes back from another product page.
+function resync() { const c = PVCart.get(MODEL); Object.keys(sel).forEach(k => delete sel[k]); Object.assign(sel, c); render(); }
+window.addEventListener('pageshow', e => { if (e.persisted) resync(); });
+window.addEventListener('storage', resync);
+PVCart.last(MODEL);
 
 async function loadStock(attempt = 1) {
   try {
@@ -299,7 +310,7 @@ if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => $('bar')
 $('f').addEventListener('submit', async e => {
   e.preventDefault();
   const v = id => $(id).value.trim();
-  const q = Object.values(sel).reduce((a, b) => a + b, 0);
+  const q = PVCart.totals().qty;
   const phone = v('phone').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, '');
   const err = !q ? 'اختاري لون واحد على الأقل من الصورة فوق.'
     : !v('name') ? 'اكتبي الاسم.'
@@ -311,25 +322,30 @@ $('f').addEventListener('submit', async e => {
   const btn = $('submit'); btn.disabled = true; btn.textContent = 'جاري تثبيت طلبك…';
   try {
     const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: '',
-      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
+      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
     const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
     const j = await r.json();
     if (!j.ok) {
-      if (j.stock) {
-        stock = {}; Object.keys(j.stock).forEach(k => stock[+k] = j.stock[k]);
-        (j.short || []).forEach(s => { sel[s.color] = s.available; if (!sel[s.color]) delete sel[s.color]; });
+      if (j.short) {
+        if (j.stocks && j.stocks[MODEL]) { stock = {}; Object.keys(j.stocks[MODEL]).forEach(k => stock[+k] = j.stocks[MODEL][k]); }
+        else if (j.stock) { stock = {}; Object.keys(j.stock).forEach(k => stock[+k] = j.stock[k]); }
+        j.short.forEach(s => {
+          if ((s.model || MODEL) === MODEL) { sel[s.color] = s.available; if (!sel[s.color]) delete sel[s.color]; }
+          else PVCart.setQty(s.model, s.color, s.available);
+        });
         render();
-        $('err').textContent = 'للأسف في ألوان خلصت أو قلّت كميتها قبل شوي: ' + (j.short || []).map(s => `لون ${s.color} (المتوفر ${s.available})`).join('، ') + '. عدّلنا اختيارك، راجعيه وأكّدي مرة ثانية.';
+        $('err').textContent = 'للأسف في ألوان خلصت أو قلّت كميتها قبل شوي: ' + j.short.map(s => `${(PVCart.MODELS[s.model || MODEL] || {}).name || ''} لون ${s.color} (المتوفر ${s.available})`).join('، ') + '. عدّلنا اختيارك، راجعيه وأكّدي مرة ثانية.';
         document.querySelector('.card').scrollIntoView({behavior: 'smooth'});
       } else $('err').textContent = j.error || 'صار خطأ، جرّبي مرة ثانية.';
       return;
     }
+    PVCart.clear(); Object.keys(sel).forEach(k => delete sel[k]);
     const d = $('done');
     d.className = 'done';
     d.innerHTML = `<div class="tick">✓</div><h2>تم استلام طلبك 🤍</h2>
       <p class="lead">ألوانك محجوزة إلك. المندوب بيتصل فيكِ على <b dir="ltr">${phone}</b> قبل التوصيل.</p>
       <dl><dt>رقم الطلب</dt><dd dir="ltr" style="text-align:right">${esc(String(j.orderId || ''))}</dd>
-      <dt>الألوان</dt><dd dir="ltr" style="text-align:right">${j.colors}</dd><dt>العدد</dt><dd>${j.qty}</dd>
+      ${(j.lines || [{product: '', colors: j.colors}]).map(l => `<dt>${esc(l.product || 'الألوان')}</dt><dd dir="ltr" style="text-align:right">${l.colors}</dd>`).join('')}<dt>العدد</dt><dd>${j.qty}</dd>
       <dt>العنوان</dt><dd>${esc(v('gov'))} – ${esc(v('area'))} – ${esc(v('addr'))}</dd>
       <dt>تدفعي عند الاستلام</dt><dd class="cod">${fmt(j.cod)}</dd></dl>
       <p class="tip">📸 خذي لقطة شاشة لهاي الصفحة.<br>ما في داعي تبعتي إشي بالرسائل، طلبك وصلنا.</p>`;

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pure Veil العراق | عروض البلاك فرايدي</title>
-<meta name="description" content="عروض البلاك فرايدي وصلت العراق: تايلندي 5 قطع بـ 25,000 وطقم Salaty بـ 20,000. اختاري لونك بكبسة، والدفع عند الاستلام.">
+<meta name="description" content="عروض البلاك فرايدي وصلت العراق: تايلندي 4 قطع بـ 25,000 وطقم Salaty بـ 20,000. اختاري لونك بكبسة، والدفع عند الاستلام.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Pure Veil">
 <meta property="og:title" content="اطلبي من هنا 👆">
@@ -72,6 +72,11 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
 .offer strong{font:800 28px/1 var(--display);color:var(--ink)}
 .offer b{font:800 28px/1 var(--display);color:var(--price);font-variant-numeric:tabular-nums}
 .unit s{color:var(--muted)}
+.mix{margin:0 16px 14px;padding:11px 14px;border-radius:14px;background:var(--gift-bg);color:var(--ink);font:500 13.5px/1.6 var(--body)}
+.cartbar{position:fixed;inset:auto 0 0 0;z-index:20;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(255,255,255,0),#fff 30%)}
+.cartbar a{max-width:560px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--price);color:#fff;text-decoration:none;border-radius:14px;padding:13px 16px;font:700 15px var(--display);box-shadow:0 6px 18px rgba(216,27,44,.3)}
+.incart{position:absolute;top:10px;right:10px;background:#2b1426;color:#fff;border-radius:999px;padding:3px 10px;font:700 12.5px var(--display)}
+[hidden]{display:none !important}
 </style>
 </head>
 <body>
@@ -81,9 +86,9 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
 <section class="hero">
   <img src="img/peach.jpg" alt="محجبة بحجاب شيفون نود">
   <div class="cap">
-    <span class="badge">خصم لحد 42%</span>
+    <span class="badge">خصم لحد 33%</span>
     <h1>عروض البلاك فرايدي وصلت العراق</h1>
-    <p>تايلندي، شيفون، حرير وأطقم صلاة بكل الألوان</p>
+    <p>حجابات بكل الألوان وطقم الصلاة Salaty</p>
     <a class="cta" href="#deals">تسوّقي العروض</a>
   </div>
 </section>
@@ -106,13 +111,14 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
   <div><span>📦</span>الحجز فوري من المخزون</div>
 </div>
 <h2 class="sec" id="deals">عروض اليوم</h2>
+<div class="mix">🎁 <b>اخلطي براحتك:</b> أي 4 حجابات من تايلندي، إسفنجي، مكسّر، شيفون سادة أو قطن بـ <b>25,000</b>، وكل طلبك بتوصيل وحدة 5,000.</div>
 <a class="prod" href="thai/">
-  <div class="ph"><img src="img/trio.jpg" alt="محجبات بحجاب مودال تايلندي" loading="lazy"><span class="chip">-42%</span><span class="gift">🎁 قطعتين هدية</span></div>
+  <div class="ph"><img src="img/trio.jpg" alt="محجبات بحجاب مودال تايلندي" loading="lazy"><span class="chip">-29%</span><span class="gift">🎁 الرابعة هدية</span></div>
   <div class="body">
     <h3>حجاب مودال تايلندي</h3>
-    <div class="offer"><strong>5 قطع</strong><span>بـ <b>25,000</b> دينار</span></div>
-    <div class="unit">بدل <s>43,000</s> · يعني القطعة بـ 5,000 دينار بس</div>
-    <div class="ladder"><div class="best">5 قطع 25,000</div><div>4 قطع 22,000</div><div>3 قطع 18,000</div><div>قطعتين 14,000</div><div>قطعة 8,000</div></div>
+    <div class="offer"><strong>4 قطع</strong><span>بـ <b>25,000</b> دينار</span></div>
+    <div class="unit">بدل <s>35,000</s> · ناعم وثابت على الراس</div>
+    <div class="ladder"><div class="best">4 قطع 25,000</div><div>3 قطع 20,000</div><div>قطعتين 14,000</div><div>قطعة 8,000</div></div>
     <div class="dots" id="dots-thai"></div>
     <span class="btn">اختاري ألوانك</span>
   </div>
@@ -178,17 +184,32 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
     <span class="btn">اختاري ألوانك</span>
   </div>
 </a>
-<div class="soon">الشيفون والحرير وموديلات أكثر رح تنزل هون قريباً.</div>
+<div class="soon">موديلات أكثر رح تنزل هون قريباً.</div>
 <h2 class="sec">كيف تطلبي</h2>
 <div class="steps"><div>اختاري الموديل</div><div>اكبسي على الألوان</div><div>اكتبي عنوانك وثبّتي</div></div>
 <footer>Pure Veil · العراق · الأسعار بالدينار العراقي</footer>
 </div>
+<div class="cartbar" id="cartbar" hidden><a id="cartgo" href="#"><span id="carttxt"></span><span>أكملي طلبك ←</span></a></div>
+<script src="cart.js"></script>
 <script>
 const C={"thai": ["#b09c93", "#886c75", "#a9a8af", "#553937", "#ebe3dd", "#997486", "#a6a5ab", "#515560", "#c0b3ab", "#74527a", "#c2aea6", "#4e5752", "#b4aba3", "#402e2c", "#9d958a", "#a8856f", "#565050", "#bcadb6", "#62655a", "#a9a69c", "#39508c", "#bea795", "#757f74", "#806460", "#b2a8a6", "#514545", "#d5aabc", "#cab8b1", "#685157", "#b2a6b0", "#908583", "#572a4e", "#d1cad2", "#262c3a", "#8babe0", "#937865", "#36467a", "#5d5f52", "#594338", "#cab0aa", "#848799", "#8d8e81", "#cbb2b2", "#5473aa", "#aa8f87", "#4d4d4d", "#442d35", "#8a3752"], "salaty": ["#e5e2e8", "#1f1f22", "#ac82d3", "#67142a", "#67643e", "#f081b7", "#dba6cd", "#bea089", "#d62574", "#412d24", "#89a281", "#d5c0af"]};
 const dots=(id,arr,n,label)=>{const e=document.getElementById(id);if(e)e.innerHTML=arr.slice(0,n).map(c=>`<i style="background:${c}"></i>`).join('')+`<span>${label}</span>`};
 dots('dots-thai',C.thai.filter((_,i)=>i%4===0),10,'+48 لون');dots('dots-salaty',C.salaty,12,'12 لون');
 const rb=document.getElementById('ribbon');if(rb){const lum=h=>{const n=parseInt(h.slice(1),16);return .3*(n>>16)+.59*((n>>8)&255)+.11*(n&255)};rb.innerHTML=C.thai.concat(C.salaty).sort((a,b)=>lum(a)-lum(b)).map(c=>`<i style="background:${c}"></i>`).join('')}
 
+// Cart: show what is already picked and a shortcut back to the order form.
+function cartUI(){
+  const T=PVCart.totals(), bar=document.getElementById('cartbar');
+  document.querySelectorAll('.incart').forEach(e=>e.remove());
+  T.lines.forEach(l=>{const a=document.querySelector(`a.prod[href="${l.path}/"] .ph`);if(a)a.insertAdjacentHTML('beforeend',`<span class="incart">بسلتك ${l.qty}</span>`)});
+  bar.hidden=!T.qty;
+  if(!T.qty)return;
+  const last=PVCart.last(), l=T.lines.find(x=>x.model===last)||T.lines[T.lines.length-1];
+  document.getElementById('cartgo').href=l.path+'/#f';
+  document.getElementById('carttxt').textContent=`سلتك: ${T.label} · ${PVCart.fmt(T.cod)}`;
+  document.querySelector('footer').style.paddingBottom='90px';
+}
+cartUI();window.addEventListener('pageshow',cartUI);window.addEventListener('storage',cartUI);
 </script>
 </body>
 </html>

@@ -138,12 +138,17 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .done dl{width:100%;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
 .done .cod{font:800 18px var(--display);color:var(--ok)}
 .done .tip{margin:4px 0 0;background:#fff7e0;border-radius:12px;padding:12px;font-weight:600;width:100%}
-[hidden]{display:none !important}
 /* Numbers sit on the right side of each piece on these photos, so the selection pills go on the left. */
 .photo .badge{left:3px;right:auto;top:50%;bottom:auto;transform:translateY(-50%);font-size:11px;padding:1px 1px 1px 6px;gap:2px}
 .photo .badge .minus{width:19px;height:19px;font-size:14px}
 .photo .low{top:50%;right:auto;left:3px;transform:translateY(-50%);font-size:10.5px;padding:4px 7px}
 .photo .spot.out::after{inset:50% auto auto 4px;transform:translateY(-50%);margin:0;font-size:11px;padding:5px 9px}
+.others{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);padding-top:4px}
+.others a{color:var(--ink);text-decoration:none;border:1px dashed var(--line);border-radius:999px;padding:2px 9px}
+.others u{color:var(--accent);text-decoration:none;font-weight:600;margin-inline-start:4px}
+.more{display:block;margin:0 14px 14px;padding:11px 12px;border:1.5px dashed var(--accent);border-radius:12px;color:var(--accent);text-align:center;font-weight:700;text-decoration:none;font-size:14px}
+.sum .ln{font-size:13px;color:var(--muted);gap:10px}.sum .ln span:last-child{text-align:left}
+[hidden]{display:none !important}
 </style>
 </head>
 <body>
@@ -166,6 +171,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <div class="loading" id="loading">جاري التأكد من الكميات المتوفرة…</div>
     <div id="photos"></div>
     <div class="picked" id="picked"></div>
+    <a class="more" id="more" href="../" hidden>➕ بدك صنف ثاني كمان؟ ارجعي للأصناف، والتوصيل بيضل مرة وحدة</a>
   </section>
 
   <form id="f" novalidate>
@@ -191,6 +197,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="../cart.js"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
 const MODEL = 'IQ-CH';
@@ -205,7 +212,7 @@ const GOVS = ['بغداد','البصرة','نينوى (الموصل)','أربي�
 const $ = id => document.getElementById(id);
 const fmt = n => n.toLocaleString('en-US') + ' دينار';
 const priceOf = (t, q) => Math.floor(q / G) * t[G] + t[q % G];
-const sel = {};          // color -> qty chosen
+const sel = PVCart.get(MODEL);          // color -> qty chosen
 let stock = null;        // color -> available, null until loaded
 const params = new URLSearchParams(location.search);
 
@@ -257,21 +264,23 @@ function render() {
     const m = b.querySelector('.minus');
     if (m) m.onclick = ev => { ev.stopPropagation(); sel[n]--; if (!sel[n]) delete sel[n]; render(); };
   });
+  PVCart.set(MODEL, sel);
   const nums = Object.keys(sel).map(Number).sort((a, b) => a - b);
-  $('picked').innerHTML = nums.map(n => `<span class="chip">لون ${n} × ${sel[n]}</span>`).join('');
-  const q = nums.reduce((s, n) => s + sel[n], 0), p = priceOf(NEW, q), o = priceOf(OLD, q);
-  $('cnt').textContent = q ? `اخترتي ${q}` : '';
-  $('go').hidden = !q;
-  $('barTxt').textContent = q ? `${unit(q)} · ${fmt(p + DELIVERY)}` : 'ما اخترتي ولا لون';
-  const left = G - (q % G);
-  const leftTxt = left === 1 ? 'قطعة وحدة' : left === 2 ? 'قطعتين' : left + ' قطع';
-  $('nudge').textContent = !q ? 'اكبسي على اللون اللي بيعجبك' : q % G
-    ? `زيدي ${leftTxt} بـ ${fmt(priceOf(NEW, q + left) - p)} بس 🎁`
-    : `وفّرتي ${fmt(o - p)} 🎉`;
-  $('sum').innerHTML = `<div><span>القطع (${q})</span><span><s>${q ? fmt(o) : ''}</s> ${fmt(p)}</span></div>`
-    + (q ? `<div class="save"><span>خصم البلاك فرايدي</span><span>− ${fmt(o - p)}</span></div>` : '')
-    + `<div><span>التوصيل</span><span>${fmt(DELIVERY)}</span></div><div class="tot"><span>المجموع عند الاستلام</span><span>${fmt(p + DELIVERY)}</span></div>`;
+  $('picked').innerHTML = nums.map(n => `<span class="chip">لون ${n} × ${sel[n]}</span>`).join('') + PVCart.othersHTML(MODEL);
+  const mine = nums.reduce((s, n) => s + sel[n], 0), T = PVCart.totals();
+  $('cnt').textContent = mine ? `اخترتي ${mine}` : '';
+  $('more').hidden = !T.qty;
+  $('go').hidden = !T.qty;
+  $('barTxt').textContent = T.qty ? `${T.label} · ${PVCart.fmt(T.cod)}` : 'ما اخترتي ولا لون';
+  $('nudge').textContent = PVCart.nudge(MODEL);
+  $('sum').innerHTML = PVCart.sumHTML();
 }
+
+// Keep this page in step with the cart when the customer comes back from another product page.
+function resync() { const c = PVCart.get(MODEL); Object.keys(sel).forEach(k => delete sel[k]); Object.assign(sel, c); render(); }
+window.addEventListener('pageshow', e => { if (e.persisted) resync(); });
+window.addEventListener('storage', resync);
+PVCart.last(MODEL);
 
 async function loadStock(attempt = 1) {
   try {
@@ -298,7 +307,7 @@ if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => $('bar')
 $('f').addEventListener('submit', async e => {
   e.preventDefault();
   const v = id => $(id).value.trim();
-  const q = Object.values(sel).reduce((a, b) => a + b, 0);
+  const q = PVCart.totals().qty;
   const phone = v('phone').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, '');
   const err = !q ? 'اختاري لون واحد على الأقل من الصورة فوق.'
     : !v('name') ? 'اكتبي الاسم.'
@@ -310,25 +319,30 @@ $('f').addEventListener('submit', async e => {
   const btn = $('submit'); btn.disabled = true; btn.textContent = 'جاري تثبيت طلبك…';
   try {
     const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: '',
-      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
+      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
     const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
     const j = await r.json();
     if (!j.ok) {
-      if (j.stock) {
-        stock = {}; Object.keys(j.stock).forEach(k => stock[+k] = j.stock[k]);
-        (j.short || []).forEach(s => { sel[s.color] = s.available; if (!sel[s.color]) delete sel[s.color]; });
+      if (j.short) {
+        if (j.stocks && j.stocks[MODEL]) { stock = {}; Object.keys(j.stocks[MODEL]).forEach(k => stock[+k] = j.stocks[MODEL][k]); }
+        else if (j.stock) { stock = {}; Object.keys(j.stock).forEach(k => stock[+k] = j.stock[k]); }
+        j.short.forEach(s => {
+          if ((s.model || MODEL) === MODEL) { sel[s.color] = s.available; if (!sel[s.color]) delete sel[s.color]; }
+          else PVCart.setQty(s.model, s.color, s.available);
+        });
         render();
-        $('err').textContent = 'للأسف في ألوان خلصت أو قلّت كميتها قبل شوي: ' + (j.short || []).map(s => `لون ${s.color} (المتوفر ${s.available})`).join('، ') + '. عدّلنا اختيارك، راجعيه وأكّدي مرة ثانية.';
+        $('err').textContent = 'للأسف في ألوان خلصت أو قلّت كميتها قبل شوي: ' + j.short.map(s => `${(PVCart.MODELS[s.model || MODEL] || {}).name || ''} لون ${s.color} (المتوفر ${s.available})`).join('، ') + '. عدّلنا اختيارك، راجعيه وأكّدي مرة ثانية.';
         document.querySelector('.card').scrollIntoView({behavior: 'smooth'});
       } else $('err').textContent = j.error || 'صار خطأ، جرّبي مرة ثانية.';
       return;
     }
+    PVCart.clear(); Object.keys(sel).forEach(k => delete sel[k]);
     const d = $('done');
     d.className = 'done';
     d.innerHTML = `<div class="tick">✓</div><h2>تم استلام طلبك 🤍</h2>
       <p class="lead">ألوانك محجوزة إلك. المندوب بيتصل فيكِ على <b dir="ltr">${phone}</b> قبل التوصيل.</p>
       <dl><dt>رقم الطلب</dt><dd dir="ltr" style="text-align:right">${esc(String(j.orderId || ''))}</dd>
-      <dt>الألوان</dt><dd dir="ltr" style="text-align:right">${j.colors}</dd><dt>العدد</dt><dd>${j.qty}</dd>
+      ${(j.lines || [{product: '', colors: j.colors}]).map(l => `<dt>${esc(l.product || 'الألوان')}</dt><dd dir="ltr" style="text-align:right">${l.colors}</dd>`).join('')}<dt>العدد</dt><dd>${j.qty}</dd>
       <dt>العنوان</dt><dd>${esc(v('gov'))} – ${esc(v('area'))} – ${esc(v('addr'))}</dd>
       <dt>تدفعي عند الاستلام</dt><dd class="cod">${fmt(j.cod)}</dd></dl>
       <p class="tip">📸 خذي لقطة شاشة لهاي الصفحة.<br>ما في داعي تبعتي إشي بالرسائل، طلبك وصلنا.</p>`;
