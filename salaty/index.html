@@ -116,6 +116,20 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .feat .pics img{width:100%;height:100%;min-height:170px;object-fit:cover;object-position:50% 22%;display:block}
 .feat ul{list-style:none;margin:0;padding:12px 4px 12px 12px;display:grid;gap:8px;font:600 14px/1.35 var(--body)}
 .feat li::before{content:"✓";color:#1f7a4d;font-weight:700;margin-inline-end:6px}
+
+.step{display:flex;align-items:center;gap:8px;color:var(--ink) !important;font:700 16px var(--display) !important}
+.step b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#2b1426;color:#fff;font:700 14px var(--display);flex:none}
+.btn.big{font-size:19px;padding:17px}
+.bar.off{transform:translateY(110%)}
+.bar{transition:transform .2s}
+.done{border:0;background:transparent;padding:28px 6px;text-align:center;justify-items:center;gap:12px;min-height:80vh;align-content:start}
+.done .tick{width:84px;height:84px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font:700 46px/1 var(--display)}
+.done h2{font-size:26px}
+.done .lead{margin:0;font-size:16px}
+.done dl{width:100%;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.done .cod{font:800 18px var(--display);color:var(--ok)}
+.done .tip{margin:4px 0 0;background:#fff7e0;border-radius:12px;padding:12px;font-weight:600;width:100%}
+[hidden]{display:none !important}
 </style>
 </head>
 <body>
@@ -136,17 +150,16 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 
   <div class="cur">الأسعار بالدينار العراقي 🇮🇶</div>
   <div class="ladder" id="ladder"></div>
-  <div class="how"><b>١</b> اكبسي على اللون <b>٢</b> عبّي عنوانك <b>٣</b> أكّدي الطلب</div>
 
   <section class="card">
-    <h2><span>اختاري ألوانك (1 – 12)</span><span id="cnt"></span></h2>
+    <h2><span class="step"><b>1</b> اكبسي على لونك من الصورة</span><span id="cnt"></span></h2>
     <div class="photo" id="photo"><img src="salaty.jpg" width="1100" height="1017" alt="ألوان طقم الصلاة Salaty من 1 إلى 12"></div>
     <div class="loading" id="loading">جاري التأكد من الكميات المتوفرة…</div>
     <div class="picked" id="picked"></div>
   </section>
 
   <form id="f" novalidate>
-    <h2>معلومات التوصيل</h2>
+    <h2 class="step"><b>2</b> اكتبي اسمك ورقمك وعنوانك</h2>
     <label for="name">الاسم<input id="name" autocomplete="name" placeholder="مثلاً: سارة أحمد"></label>
     <label for="phone">رقم الهاتف<input id="phone" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="07XXXXXXXXX"></label>
     <div class="row">
@@ -154,10 +167,9 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
       <label for="area">المنطقة<input id="area" placeholder="الحي أو المنطقة"></label>
     </div>
     <label for="addr">العنوان بالتفصيل<textarea id="addr" rows="2" placeholder="أقرب نقطة دالة"></textarea></label>
-    <label for="notes">ملاحظات (اختياري)<input id="notes"></label>
     <div class="sum" id="sum"></div>
     <div class="err" id="err" role="alert"></div>
-    <button class="btn" id="submit" type="submit">تأكيد الطلب</button>
+    <button class="btn big" id="submit" type="submit">ثبّتي طلبي ✓</button>
   </form>
   <div id="done" hidden></div>
   <footer>Pure Veil · العراق</footer>
@@ -165,7 +177,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 
 <div class="bar" id="bar"><div class="in">
   <div class="info"><div class="big" id="barTxt">ما اخترتي ولا لون</div><div class="nudge" id="nudge"></div></div>
-  <button class="btn" id="go" type="button">أكملي الطلب</button>
+  <button class="btn" id="go" type="button" hidden>التالي: عنوانك ⬇</button>
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -229,6 +241,7 @@ function render() {
   $('picked').innerHTML = nums.map(n => `<span class="chip">لون ${n} × ${sel[n]}</span>`).join('');
   const q = nums.reduce((s, n) => s + sel[n], 0), p = priceOf(NEW, q), o = priceOf(OLD, q);
   $('cnt').textContent = q ? `اخترتي ${q}` : '';
+  $('go').hidden = !q;
   $('barTxt').textContent = q ? `${q} ${q === 1 ? 'طقم' : q === 2 ? 'طقمين' : 'أطقم'} · ${fmt(p + DELIVERY)}` : 'ما اخترتي ولا لون';
   const left = 3 - (q % 3);
   $('nudge').textContent = !q ? 'اكبسي على اللون اللي بيعجبك' : q % 3
@@ -256,7 +269,8 @@ async function loadStock() {
 render(); loadStock();
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loadStock(); });
 
-$('go').onclick = () => $('f').scrollIntoView({behavior: 'smooth', block: 'start'});
+$('go').onclick = () => { $('f').scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(() => $('name').focus({preventScroll: true}), 450); };
+if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => $('bar').classList.toggle('off', e.isIntersecting), {threshold: .15}).observe($('f'));
 
 $('f').addEventListener('submit', async e => {
   e.preventDefault();
@@ -272,7 +286,7 @@ $('f').addEventListener('submit', async e => {
   if (err) return;
   const btn = $('submit'); btn.disabled = true; btn.textContent = 'جاري تثبيت طلبك…';
   try {
-    const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: v('notes'),
+    const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: '',
       items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
     const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
     const j = await r.json();
@@ -288,17 +302,20 @@ $('f').addEventListener('submit', async e => {
     }
     const d = $('done');
     d.className = 'done';
-    d.innerHTML = `<h2>تم تثبيت طلبك وحجز ألوانك 🤍</h2><p>بنتواصل معك لتأكيد الطلب قبل الشحن.</p>
-      <dl><dt>الاسم</dt><dd>${esc(v('name'))}</dd><dt>الهاتف</dt><dd dir="ltr" style="text-align:right">${phone}</dd>
-      <dt>العنوان</dt><dd>${esc(v('gov'))} – ${esc(v('area'))} – ${esc(v('addr'))}</dd>
+    d.innerHTML = `<div class="tick">✓</div><h2>تم استلام طلبك 🤍</h2>
+      <p class="lead">ألوانك محجوزة إلك. المندوب بيتصل فيكِ على <b dir="ltr">${phone}</b> قبل التوصيل.</p>
+      <dl><dt>رقم الطلب</dt><dd dir="ltr" style="text-align:right">${esc(String(j.orderId || ''))}</dd>
       <dt>الألوان</dt><dd dir="ltr" style="text-align:right">${j.colors}</dd><dt>العدد</dt><dd>${j.qty}</dd>
-      <dt>المجموع</dt><dd>${fmt(j.cod)} عند الاستلام</dd></dl>`;
+      <dt>العنوان</dt><dd>${esc(v('gov'))} – ${esc(v('area'))} – ${esc(v('addr'))}</dd>
+      <dt>تدفعي عند الاستلام</dt><dd class="cod">${fmt(j.cod)}</dd></dl>
+      <p class="tip">📸 خذي لقطة شاشة لهاي الصفحة.<br>ما في داعي تبعتي إشي بالرسائل، طلبك وصلنا.</p>`;
     d.hidden = false; $('f').hidden = true; $('bar').hidden = true;
-    d.scrollIntoView({behavior: 'smooth'});
+    document.querySelectorAll('#app > :not(#done)').forEach(x => x.hidden = true);
+    window.scrollTo(0, 0);
   } catch (x) {
     $('err').textContent = 'ما وصل الطلب بسبب الإنترنت، جرّبي مرة ثانية.';
   } finally {
-    btn.disabled = false; btn.textContent = 'تأكيد الطلب';
+    btn.disabled = false; btn.textContent = 'ثبّتي طلبي ✓';
   }
 });
 function esc(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
