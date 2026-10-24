@@ -252,9 +252,9 @@ function render() {
     + `<div><span>التوصيل</span><span>${fmt(DELIVERY)}</span></div><div class="tot"><span>المجموع عند الاستلام</span><span>${fmt(p + DELIVERY)}</span></div>`;
 }
 
-async function loadStock() {
+async function loadStock(attempt = 1) {
   try {
-    const r = await fetch(`${API}?action=stock&model=${MODEL}`, {cache: 'no-store'});
+    const r = await fetch(`${API}?action=stock&model=${MODEL}&t=${Date.now()}`, {cache: 'no-store'});
     const j = await r.json();
     if (!j.ok) throw new Error(j.error);
     stock = {}; Object.keys(j.stock).forEach(k => stock[+k] = j.stock[k]);
@@ -262,6 +262,8 @@ async function loadStock() {
     // Drop anything chosen that is no longer available.
     Object.keys(sel).forEach(n => { if (sel[n] > (stock[n] || 0)) { sel[n] = stock[n] || 0; if (!sel[n]) delete sel[n]; } });
   } catch (e) {
+    // Google sometimes answers with a temporary error page; retry quietly before telling the customer.
+    if (attempt < 4) { setTimeout(() => loadStock(attempt + 1), 1200 * attempt); return; }
     $('loading').textContent = 'ما قدرنا نتأكد من الكميات، حدّثي الصفحة.';
   }
   render();
