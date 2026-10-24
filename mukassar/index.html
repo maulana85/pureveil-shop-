@@ -137,6 +137,11 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .done .cod{font:800 18px var(--display);color:var(--ok)}
 .done .tip{margin:4px 0 0;background:#fff7e0;border-radius:12px;padding:12px;font-weight:600;width:100%}
 [hidden]{display:none !important}
+/* Numbers sit in the middle of each piece on these photos, so keep the selection pills at the sides. */
+.photo .badge{left:auto;right:3px;top:50%;bottom:auto;transform:translateY(-50%);font-size:11px;padding:1px 1px 1px 6px;gap:2px}
+.photo .badge .minus{width:19px;height:19px;font-size:14px}
+.photo .low{top:50%;right:3px;transform:translateY(-50%);font-size:10.5px;padding:4px 7px}
+.photo .spot.out::after{inset:50% auto auto 4px;transform:translateY(-50%);margin:0;font-size:11px;padding:5px 9px}
 </style>
 </head>
 <body>
