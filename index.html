@@ -111,6 +111,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--price);outline-offs
   <div><span>📦</span>الحجز فوري من المخزون</div>
 </div>
 <h2 class="sec" id="deals">عروض اليوم</h2>
+<div class="mix" id="promoNote" hidden style="background:#e7f6ec"></div>
 <div class="mix">🎁 <b>اخلطي براحتك:</b> أي 4 حجابات من تايلندي، إسفنجي، مكسّر، شيفون سادة أو قطن بـ <b>25,000</b>، وكل طلبك بتوصيل وحدة 5,000.</div>
 <a class="prod" href="thai/">
   <div class="ph"><img src="img/trio.jpg" alt="محجبات بحجاب مودال تايلندي" loading="lazy"><span class="chip">-29%</span><span class="gift">🎁 الرابعة هدية</span></div>
@@ -209,7 +210,8 @@ function cartUI(){
   document.getElementById('carttxt').textContent=`سلتك: ${T.label} · ${PVCart.fmt(T.cod)}`;
   document.querySelector('footer').style.paddingBottom='90px';
 }
-cartUI();window.addEventListener('pageshow',cartUI);window.addEventListener('storage',cartUI);
+function promoUI(){const p=PVCart.promo(),e=document.getElementById('promoNote');if(e)e.hidden=!p;if(p&&e)e.textContent=`🎁 كود ${p.code} مفعّل: التوصيل مجاني على طلبك`;}
+cartUI();promoUI();window.addEventListener('pageshow',()=>{cartUI();promoUI()});window.addEventListener('storage',()=>{cartUI();promoUI()});window.addEventListener('pvpromo',()=>{cartUI();promoUI()});
 </script>
 </body>
 </html>

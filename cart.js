@@ -3,7 +3,8 @@
  * thai / sponge / mukassar / chiffon / cotton = 25,000) and delivery is charged once.
  * The server (Order API) recomputes every price; this file only displays them. */
 (function () {
-  var KEY = 'pv_iq_cart_v1', TTL = 3 * 864e5, DELIVERY = 5000;
+  var KEY = 'pv_iq_cart_v1', TTL = 3 * 864e5, DELIVERY = 5000, PKEY = 'pv_iq_promo_v1';
+  var API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
   var GROUPS = {
     A:  { tiers: [0, 8000, 14000, 20000, 25000], old: [0, 10000, 18000, 25000, 35000] },
     CH: { tiers: [0, 10000, 18000, 25000],       old: [0, 15000, 25000, 30000] },
@@ -19,7 +20,12 @@
     'IQ-PS': { name: 'طقم Salaty',     path: 'salaty',        g: 'PS' }
   };
   var ORDER = ['IQ-TH', 'IQ-SP', 'IQ-MK', 'IQ-CS', 'IQ-DS', 'IQ-CH', 'IQ-PS'];
-  var mem = {};
+  var mem = {}, pmem = null;
+  function getPromo() {
+    try { var o = JSON.parse(localStorage.getItem(PKEY) || 'null'); if (o && o.code && Date.now() - o.t < TTL) return o; } catch (e) {}
+    return pmem;
+  }
+  function setPromo(o) { pmem = o; try { if (o) localStorage.setItem(PKEY, JSON.stringify(o)); else localStorage.removeItem(PKEY); } catch (e) {} }
 
   function read() {
     try {
@@ -67,8 +73,9 @@
       });
       Object.keys(groups).forEach(function (g) { total += price(GROUPS[g].tiers, groups[g]); old += price(GROUPS[g].old, groups[g]); });
       var onlySets = lines.length > 0 && lines.every(function (l) { return l.g === 'PS'; });
-      return { lines: lines, groups: groups, qty: qty, total: total, old: old, delivery: qty ? DELIVERY : 0,
-               cod: total + (qty ? DELIVERY : 0), label: unit(qty, onlySets) };
+      var promo = getPromo(), fee = qty && !promo ? DELIVERY : 0;
+      return { lines: lines, groups: groups, qty: qty, total: total, old: old, delivery: fee, promo: promo,
+               cod: total + fee, label: unit(qty, onlySets) };
     },
     /** Body lines for the Order API. */
     lines: function () {
@@ -103,9 +110,27 @@
       return rows
         + '<div><span>القطع (' + T.qty + ')</span><span><s>' + (T.qty ? fmt(T.old) : '') + '</s> ' + fmt(T.total) + '</span></div>'
         + (T.qty && T.old > T.total ? '<div class="save"><span>خصم البلاك فرايدي</span><span>− ' + fmt(T.old - T.total) + '</span></div>' : '')
-        + '<div><span>التوصيل' + (T.lines.length > 1 ? ' (مرة وحدة)' : '') + '</span><span>' + fmt(DELIVERY) + '</span></div>'
-        + '<div class="tot"><span>المجموع عند الاستلام</span><span>' + fmt(T.total + DELIVERY) + '</span></div>';
+        + (T.promo
+          ? '<div class="save"><span>التوصيل (كود ' + T.promo.code + ')</span><span><s>' + fmt(DELIVERY) + '</s> مجاني 🎁</span></div>'
+          : '<div><span>التوصيل' + (T.lines.length > 1 ? ' (مرة وحدة)' : '') + '</span><span>' + fmt(DELIVERY) + '</span></div>')
+        + '<div class="tot"><span>المجموع عند الاستلام</span><span>' + fmt(T.total + (T.promo ? 0 : DELIVERY)) + '</span></div>';
     }
   };
+  /** Promo code: checked by the Order API; the server checks it again when the order is placed. */
+  api.promo = getPromo;
+  api.clearPromo = function () { setPromo(null); };
+  api.applyPromo = function (code) {
+    code = String(code || '').replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }).replace(/\s+/g, '').toUpperCase();
+    if (!code) return Promise.resolve({ ok: false, error: 'اكتبي الكود.' });
+    return fetch(API + '?action=promo&code=' + encodeURIComponent(code) + '&t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j.ok) setPromo({ code: j.code, type: j.type, t: Date.now() }); return j; })
+      .catch(function () { return { ok: false, error: 'ما قدرنا نتأكد من الكود، جرّبي كمان مرة.' }; });
+  };
+  // Influencer / campaign links: pureveiliq.com/?code=SARA applies the code on any page.
+  try {
+    var qc = new URLSearchParams(location.search).get('code');
+    if (qc) api.applyPromo(qc).then(function (j) { api.lastPromo = j; try { window.dispatchEvent(new CustomEvent('pvpromo', { detail: j })); } catch (e) {} });
+  } catch (e) {}
   window.PVCart = api;
 })();

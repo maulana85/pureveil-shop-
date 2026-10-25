@@ -147,6 +147,11 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .more{display:block;margin:0 14px 14px;padding:11px 12px;border:1.5px dashed var(--accent);border-radius:12px;color:var(--accent);text-align:center;font-weight:700;text-decoration:none;font-size:14px}
 .sum .ln{font-size:13px;color:var(--muted);gap:10px}.sum .ln span:last-child{text-align:left}
 [hidden]{display:none !important}
+.promo{border:1px dashed var(--line);border-radius:12px;padding:8px 12px}
+.promo summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:14px}
+.promo .pr{display:flex;gap:8px;margin-top:8px}.promo .pr input{flex:1;text-transform:uppercase}
+.promo .pr button{flex:none;border:0;border-radius:10px;padding:0 16px;background:var(--accent);color:#fff;font:700 14px var(--display)}
+.promo p{margin:6px 0 0;font-size:13px}.promo p.ok{color:var(--ok);font-weight:700}.promo p.no{color:#c0392b}
 </style>
 </head>
 <body>
@@ -181,6 +186,9 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
       <label for="area">المنطقة<input id="area" placeholder="الحي أو المنطقة"></label>
     </div>
     <label for="addr">العنوان بالتفصيل<textarea id="addr" rows="2" placeholder="أقرب نقطة دالة"></textarea></label>
+    <details class="promo" id="promoBox"><summary>عندك كود خصم؟</summary>
+      <div class="pr"><input id="promo" dir="ltr" autocomplete="off" placeholder="اكتبي الكود"><button type="button" id="promoBtn">تطبيق</button></div>
+      <p id="promoMsg"></p></details>
     <div class="sum" id="sum"></div>
     <div class="err" id="err" role="alert"></div>
     <button class="btn big" id="submit" type="submit">ثبّتي طلبي ✓</button>
@@ -278,6 +286,21 @@ function render() {
 function resync() { const c = PVCart.get(MODEL); Object.keys(sel).forEach(k => delete sel[k]); Object.assign(sel, c); render(); }
 window.addEventListener('pageshow', e => { if (e.persisted) resync(); });
 window.addEventListener('storage', resync);
+// Promo code (free delivery). The server checks it again when the order is placed.
+function promoUI() {
+  const p = PVCart.promo(), m = $('promoMsg');
+  if (p) { $('promoBox').open = true; $('promo').value = p.code; m.className = 'ok'; m.innerHTML = `✓ كود ${p.code}: التوصيل مجاني 🎁 <a href="#" id="promoX">شيلي الكود</a>`;
+    $('promoX').onclick = e => { e.preventDefault(); PVCart.clearPromo(); $('promo').value = ''; m.textContent = ''; m.className = ''; render(); }; }
+}
+$('promoBtn').onclick = async () => {
+  const m = $('promoMsg'); m.className = ''; m.textContent = 'جاري التأكد…';
+  const j = await PVCart.applyPromo($('promo').value);
+  if (!j.ok) { m.className = 'no'; m.textContent = j.error || 'الكود غير صحيح.'; return; }
+  promoUI(); render();
+};
+window.addEventListener('pvpromo', e => { const j = e.detail || {}; if (!j.ok && j.error) { $('promoBox').open = true; $('promoMsg').className = 'no'; $('promoMsg').textContent = j.error; } promoUI(); render(); });
+promoUI();
+
 PVCart.last(MODEL);
 
 async function loadStock(attempt = 1) {
@@ -317,7 +340,7 @@ $('f').addEventListener('submit', async e => {
   const btn = $('submit'); btn.disabled = true; btn.textContent = 'جاري تثبيت طلبك…';
   try {
     const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: '',
-      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), page: location.href.slice(0, 200), campaign: params.get('c') || ''};
+      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), promo: (PVCart.promo() || {}).code || '', page: location.href.slice(0, 200), campaign: params.get('c') || ''};
     const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
     const j = await r.json();
     if (!j.ok) {
@@ -331,10 +354,11 @@ $('f').addEventListener('submit', async e => {
         render();
         $('err').textContent = 'للأسف في ألوان خلصت أو قلّت كميتها قبل شوي: ' + j.short.map(s => `${(PVCart.MODELS[s.model || MODEL] || {}).name || ''} لون ${s.color} (المتوفر ${s.available})`).join('، ') + '. عدّلنا اختيارك، راجعيه وأكّدي مرة ثانية.';
         document.querySelector('.card').scrollIntoView({behavior: 'smooth'});
-      } else $('err').textContent = j.error || 'صار خطأ، جرّبي مرة ثانية.';
+      } else if (j.promoError) { PVCart.clearPromo(); $('promoMsg').className = 'no'; $('promoMsg').textContent = j.error; render(); $('err').textContent = j.error + ' شلنا الكود، المجموع صار ' + PVCart.fmt(PVCart.totals().cod) + '. اضغطي ثبّتي مرة ثانية.'; }
+      else $('err').textContent = j.error || 'صار خطأ، جرّبي مرة ثانية.';
       return;
     }
-    PVCart.clear(); Object.keys(sel).forEach(k => delete sel[k]);
+    PVCart.clear(); PVCart.clearPromo(); Object.keys(sel).forEach(k => delete sel[k]);
     const d = $('done');
     d.className = 'done';
     d.innerHTML = `<div class="tick">✓</div><h2>تم استلام طلبك 🤍</h2>
