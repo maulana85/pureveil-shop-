@@ -245,5 +245,15 @@
   window.addEventListener('pageshow', refreshUI);
   window.addEventListener('storage', refreshUI);
   window.addEventListener('pvpromo', refreshUI);
+  /* Campaign / staff tag from ?c= — remembered 7 days so it survives moving between pages. */
+  var CKEY = 'pv_iq_camp_v1', cmem = '';
+  try {
+    var qcamp = new URLSearchParams(location.search).get('c');
+    if (qcamp) { cmem = qcamp.slice(0, 100); localStorage.setItem(CKEY, JSON.stringify({ c: cmem, t: Date.now() })); }
+  } catch (e) {}
+  api.campaign = function () {
+    try { var o = JSON.parse(localStorage.getItem(CKEY) || 'null'); if (o && o.c && Date.now() - o.t < 7 * 864e5) return o.c; } catch (e) {}
+    return cmem;
+  };
   window.PVCart = api;
 })();

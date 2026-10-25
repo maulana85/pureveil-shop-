@@ -204,7 +204,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="../cart.js?v=7"></script>
+<script src="../cart.js?v=8"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
 const MODEL = 'IQ-PS';
@@ -342,7 +342,7 @@ $('f').addEventListener('submit', async e => {
   const btn = $('submit'); btn.disabled = true; btn.textContent = 'جاري تثبيت طلبك…';
   try {
     const body = {model: MODEL, name: v('name'), phone, gov: v('gov'), area: v('area'), addr: v('addr'), notes: '',
-      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), promo: (PVCart.promo() || {}).code || '', page: location.href.slice(0, 200), campaign: params.get('c') || ''};
+      items: Object.keys(sel).map(n => ({color: +n, qty: sel[n]})), lines: PVCart.lines(), promo: (PVCart.promo() || {}).code || '', page: location.href.slice(0, 200), campaign: params.get('c') || PVCart.campaign() || ''};
     const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
     const j = await r.json();
     if (!j.ok) {
