@@ -167,7 +167,7 @@
   var BASE = (function () {
     try { var el = document.currentScript || document.querySelector('script[src*="cart.js"]'); return el.getAttribute('src').replace(/cart\.js.*$/, ''); } catch (e) { return '../'; }
   })();
-  var CSS = '.pvc-btn{position:fixed;top:10px;right:10px;z-index:40;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 14px;'
+  var CSS = '.pvc-btn[hidden]{display:none!important}.pvc-btn{position:fixed;top:10px;right:10px;z-index:40;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 14px;'
     + 'background:#2b1426;color:#fff;font:700 14px system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}'
     + '.pvc-btn b{background:#d81b2c;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12.5px;padding:0 6px}'
     + '.pvc-bg{position:fixed;inset:0;z-index:50;background:rgba(20,8,18,.45);display:none}.pvc-bg.open{display:block}'
