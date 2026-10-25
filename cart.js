@@ -6,9 +6,9 @@
   var KEY = 'pv_iq_cart_v1', TTL = 3 * 864e5, DELIVERY = 5000, PKEY = 'pv_iq_promo_v1';
   var API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
   var GROUPS = {
-    A:  { tiers: [0, 8000, 14000, 20000, 25000], old: [0, 10000, 18000, 25000, 35000] },
-    CH: { tiers: [0, 10000, 18000, 25000],       old: [0, 15000, 25000, 30000] },
-    PS: { tiers: [0, 20000, 35000, 50000],       old: [0, 30000, 50000, 70000], set: true }
+    A:  { tiers: [0, 8000, 14000, 20000, 25000], old: [0, 10000, 18000, 25000, 35000], extra: 6000 },
+    CH: { tiers: [0, 10000, 18000, 25000],       old: [0, 15000, 25000, 30000], extra: 8000 },
+    PS: { tiers: [0, 20000, 35000, 50000],       old: [0, 30000, 50000, 70000], extra: 16000, set: true }
   };
   var MODELS = {
     'IQ-TH': { name: 'تايلندي',        path: 'thai',          g: 'A'  , img: 'img/trio.jpg' },
@@ -47,7 +47,14 @@
     try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), c: out })); } catch (e) {}
     return out;
   }
-  function price(t, q) { var n = t.length - 1; return Math.floor(q / n) * t[n] + t[q % n]; }
+  // Up to the offer size: the ladder. After it: every extra piece at the group's flat 'extra' price.
+  // Without 'extra' (the struck-through old prices) the ladder repeats.
+  function price(t, q, extra) {
+    var n = t.length - 1;
+    if (extra && q > n) return t[n] + (q - n) * extra;
+    return Math.floor(q / n) * t[n] + t[q % n];
+  }
+  function gprice(g, q) { return price(GROUPS[g].tiers, q, GROUPS[g].extra); }
   function sum(o) { return Object.keys(o || {}).reduce(function (a, n) { return a + o[n]; }, 0); }
   function fmt(n) { return n.toLocaleString('en-US') + ' دينار'; }
   function unit(q, set) {
@@ -71,7 +78,7 @@
         lines.push({ model: m, name: info.name, path: info.path, g: info.g, qty: q, colors: c[m] });
         groups[info.g] = (groups[info.g] || 0) + q; qty += q;
       });
-      Object.keys(groups).forEach(function (g) { total += price(GROUPS[g].tiers, groups[g]); old += price(GROUPS[g].old, groups[g]); });
+      Object.keys(groups).forEach(function (g) { total += gprice(g, groups[g]); old += price(GROUPS[g].old, groups[g]); });
       var onlySets = lines.length > 0 && lines.every(function (l) { return l.g === 'PS'; });
       var promo = getPromo(), fee = qty && !promo ? DELIVERY : 0;
       return { lines: lines, groups: groups, qty: qty, total: total, old: old, delivery: fee, promo: promo,
@@ -87,8 +94,8 @@
     nudge: function (m) {
       var g = MODELS[m].g, G = GROUPS[g], n = G.tiers.length - 1, q = api.totals().groups[g] || 0;
       if (!q) return 'اكبسي على اللون اللي بيعجبك';
-      if (!(q % n)) return 'وفّرتي ' + fmt(price(G.old, q) - price(G.tiers, q)) + ' 🎉';
-      var left = n - (q % n), add = price(G.tiers, q + left) - price(G.tiers, q);
+      if (q >= n) return 'وفّرتي ' + fmt(price(G.old, q) - gprice(g, q)) + ' 🎉 وكل ' + (G.set ? 'طقم' : 'قطعة') + ' زيادة بـ ' + fmt(G.extra);
+      var left = n - q, add = gprice(g, n) - gprice(g, q);
       var many = Object.keys(MODELS).filter(function (k) { return MODELS[k].g === g; }).length > 1;
       return 'زيدي ' + (left === 1 ? (G.set ? 'طقم واحد' : 'قطعة وحدة') : unit(left, G.set)) + (many ? ' من أي صنف' : '') + ' بـ ' + fmt(add) + ' بس 🎁';
     },
@@ -125,13 +132,16 @@
       return '<a class="up-p" href="../' + x.path + '/"><img src="../' + x.img + '" alt="" loading="lazy"><span>' + x.name + '</span></a>';
     };
     var same = Object.keys(MODELS).filter(function (k) { return MODELS[k].g === g && k !== m; });
-    if (q % n) {
-      var left = n - (q % n), add = price(G.tiers, q + left) - price(G.tiers, q);
+    if (q && q < n) {
+      var left = n - q, add = gprice(g, n) - gprice(g, q);
       return '<div class="upsell"><b>🎁 زيدي ' + (left === 1 ? (G.set ? 'طقم واحد' : 'قطعة وحدة') : unit(left, G.set)) + ' بـ ' + fmt(add) + ' بس</b>'
-        + '<small>وبيصير عندك ' + unit(q + left, G.set) + ' بـ ' + fmt(price(G.tiers, q + left)) + '، والتوصيل نفسه.</small>'
+        + '<small>وبيصير عندك ' + unit(n, G.set) + ' بـ ' + fmt(gprice(g, n)) + '، والتوصيل نفسه.</small>'
         + '<div class="up-row"><a class="up-p up-here" href="#pick"><span>⬆ من نفس الألوان</span></a>' + same.map(card).join('') + '</div></div>';
     }
-    var others = ['IQ-PS', 'IQ-TH', 'IQ-SP', 'IQ-CH'].filter(function (k) { return k !== m && !(T.lines.some(function (l) { return l.model === k; })); }).slice(0, 3);
+    var others = ['IQ-PS', 'IQ-TH', 'IQ-SP', 'IQ-CH'].filter(function (k) { return MODELS[k].g !== g && !(T.lines.some(function (l) { return l.model === k; })); }).slice(0, 2);
+    if (q >= n) return '<div class="upsell"><b>🎉 كمّلتي العرض! هلا كل ' + (G.set ? 'طقم' : 'قطعة') + ' زيادة بـ ' + fmt(G.extra) + ' بس</b>'
+      + '<small>بنفس التوصيل، بدون ما تستني عرض جديد.</small>'
+      + '<div class="up-row"><a class="up-p up-here" href="#pick"><span>⬆ من نفس الألوان</span></a>' + same.map(card).concat(others.map(card)).join('') + '</div></div>';
     if (!others.length) return '';
     return '<div class="upsell"><b>🤍 بتحبي تضيفي إشي ثاني على نفس التوصيل؟</b><div class="up-row">' + others.map(card).join('') + '</div></div>';
   };
@@ -223,7 +233,14 @@
   }
   var origSet = api.set;
   api.set = function (m, sel) { origSet(m, sel); refreshUI(); };
-  function boot() { buildUI(); refreshUI(); }
+  function ladderNote() {
+    var m = curModel(), lad = document.getElementById('ladder');
+    if (!m || !lad || document.getElementById('pvExtra')) return;
+    var G = GROUPS[MODELS[m].g], p = el('p', '', 'وبعد العرض: كل ' + (G.set ? 'طقم' : 'قطعة') + ' زيادة بـ <b>' + fmt(G.extra) + '</b> بس');
+    p.id = 'pvExtra'; p.style.cssText = 'margin:8px 4px 0;text-align:center;font-size:14px;color:#6e3b5e;font-weight:600';
+    lad.parentNode.insertBefore(p, lad.nextSibling);
+  }
+  function boot() { buildUI(); refreshUI(); ladderNote(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   window.addEventListener('pageshow', refreshUI);
   window.addEventListener('storage', refreshUI);
