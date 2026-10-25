@@ -152,9 +152,17 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 .promo .pr{display:flex;gap:8px;margin-top:8px}.promo .pr input{flex:1;text-transform:uppercase}
 .promo .pr button{flex:none;border:0;border-radius:10px;padding:0 16px;background:var(--accent);color:#fff;font:700 14px var(--display)}
 .promo p{margin:6px 0 0;font-size:13px}.promo p.ok{color:var(--ok);font-weight:700}.promo p.no{color:#c0392b}
+.home{position:fixed;top:10px;left:10px;z-index:30;background:#fff;color:var(--ink);text-decoration:none;font:700 13.5px var(--display);padding:8px 13px;border-radius:999px;box-shadow:0 3px 12px rgba(0,0,0,.18)}
+.upsell{display:grid;gap:6px;background:var(--gift-bg,#fff1cc);border-radius:14px;padding:12px}
+.upsell b{font:700 15px var(--display)}.upsell small{color:var(--muted);font-size:12.5px}
+.up-row{display:flex;gap:8px;overflow-x:auto;padding-top:4px}
+.up-p{flex:none;width:86px;display:grid;gap:4px;text-align:center;text-decoration:none;color:var(--ink);font-size:12px;font-weight:600}
+.up-p img{width:86px;height:86px;object-fit:cover;border-radius:12px;display:block}
+.up-here{align-content:center;height:86px;border:1.5px dashed var(--accent);border-radius:12px;color:var(--accent)}
 </style>
 </head>
 <body>
+<a class="home" href="../">🏠 كل الأصناف</a>
 <div class="wrap" id="app">
   <section class="hero2">
     <img src="model.jpg" alt="محجبة بحجاب مودال إسفنجي" fetchpriority="high">
@@ -169,7 +177,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
   <div class="cur">الأسعار بالدينار العراقي 🇮🇶</div>
   <div class="ladder" id="ladder"></div>
 
-  <section class="card">
+  <section class="card" id="pick">
     <h2><span class="step"><b>1</b> اكبسي على لونك من الصورة</span><span id="cnt"></span></h2>
     <div class="loading" id="loading">جاري التأكد من الكميات المتوفرة…</div>
     <div id="photos"></div>
@@ -179,6 +187,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 
   <form id="f" novalidate>
     <h2 class="step"><b>2</b> اكتبي اسمك ورقمك وعنوانك</h2>
+    <div id="upsell"></div>
     <label for="name">الاسم<input id="name" autocomplete="name" placeholder="مثلاً: سارة أحمد"></label>
     <label for="phone">رقم الهاتف<input id="phone" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="07XXXXXXXXX"></label>
     <div class="row">
@@ -203,7 +212,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="../cart.js?v=3"></script>
+<script src="../cart.js?v=4"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwFJvS4Nuj4LngAdzz7IRjU_oWzLVXXDatn6sL6XHJN3eukFP-7qdKCgLGwGI6j2gK3KA/exec';
 const MODEL = 'IQ-SP';
@@ -280,6 +289,7 @@ function render() {
   $('barTxt').textContent = T.qty ? `${T.label} · ${PVCart.fmt(T.cod)}` : 'ما اخترتي ولا لون';
   $('nudge').textContent = PVCart.nudge(MODEL);
   $('sum').innerHTML = PVCart.sumHTML();
+  $('upsell').innerHTML = PVCart.upsellHTML(MODEL);
 }
 
 // Keep this page in step with the cart when the customer comes back from another product page.

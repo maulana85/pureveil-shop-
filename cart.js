@@ -11,13 +11,13 @@
     PS: { tiers: [0, 20000, 35000, 50000],       old: [0, 30000, 50000, 70000], set: true }
   };
   var MODELS = {
-    'IQ-TH': { name: 'تايلندي',        path: 'thai',          g: 'A'  },
-    'IQ-SP': { name: 'إسفنجي',         path: 'sponge',        g: 'A'  },
-    'IQ-MK': { name: 'مكسّر',          path: 'mukassar',      g: 'A'  },
-    'IQ-CS': { name: 'شيفون سادة',     path: 'chiffon',       g: 'A'  },
-    'IQ-DS': { name: 'قطن دبل سترتش',  path: 'cotton',        g: 'A'  },
-    'IQ-CH': { name: 'شيفون بقمطة',    path: 'chiffon-qamta', g: 'CH' },
-    'IQ-PS': { name: 'طقم Salaty',     path: 'salaty',        g: 'PS' }
+    'IQ-TH': { name: 'تايلندي',        path: 'thai',          g: 'A'  , img: 'img/trio.jpg' },
+    'IQ-SP': { name: 'إسفنجي',         path: 'sponge',        g: 'A'  , img: 'sponge/model.jpg' },
+    'IQ-MK': { name: 'مكسّر',          path: 'mukassar',      g: 'A'  , img: 'mukassar/model.jpg' },
+    'IQ-CS': { name: 'شيفون سادة',     path: 'chiffon',       g: 'A'  , img: 'chiffon/model.jpg' },
+    'IQ-DS': { name: 'قطن دبل سترتش',  path: 'cotton',        g: 'A'  , img: 'cotton/model.jpg' },
+    'IQ-CH': { name: 'شيفون بقمطة',    path: 'chiffon-qamta', g: 'CH' , img: 'chiffon-qamta/model.jpg' },
+    'IQ-PS': { name: 'طقم Salaty',     path: 'salaty',        g: 'PS' , img: 'salaty/m1.jpg' }
   };
   var ORDER = ['IQ-TH', 'IQ-SP', 'IQ-MK', 'IQ-CS', 'IQ-DS', 'IQ-CH', 'IQ-PS'];
   var mem = {}, pmem = null;
@@ -116,6 +116,26 @@
         + '<div class="tot"><span>المجموع عند الاستلام</span><span>' + fmt(T.total + (T.promo ? 0 : DELIVERY)) + '</span></div>';
     }
   };
+  /** Upsell box shown at the top of the order form (step 2). */
+  api.upsellHTML = function (m) {
+    var T = api.totals(), g = MODELS[m].g, G = GROUPS[g], n = G.tiers.length - 1, q = T.groups[g] || 0;
+    if (!T.qty) return '';
+    var card = function (k) {
+      var x = MODELS[k];
+      return '<a class="up-p" href="../' + x.path + '/"><img src="../' + x.img + '" alt="" loading="lazy"><span>' + x.name + '</span></a>';
+    };
+    var same = Object.keys(MODELS).filter(function (k) { return MODELS[k].g === g && k !== m; });
+    if (q % n) {
+      var left = n - (q % n), add = price(G.tiers, q + left) - price(G.tiers, q);
+      return '<div class="upsell"><b>🎁 زيدي ' + (left === 1 ? (G.set ? 'طقم واحد' : 'قطعة وحدة') : unit(left, G.set)) + ' بـ ' + fmt(add) + ' بس</b>'
+        + '<small>وبيصير عندك ' + unit(q + left, G.set) + ' بـ ' + fmt(price(G.tiers, q + left)) + '، والتوصيل نفسه.</small>'
+        + '<div class="up-row"><a class="up-p up-here" href="#pick"><span>⬆ من نفس الألوان</span></a>' + same.map(card).join('') + '</div></div>';
+    }
+    var others = ['IQ-PS', 'IQ-TH', 'IQ-SP', 'IQ-CH'].filter(function (k) { return k !== m && !(T.lines.some(function (l) { return l.model === k; })); }).slice(0, 3);
+    if (!others.length) return '';
+    return '<div class="upsell"><b>🤍 بتحبي تضيفي إشي ثاني على نفس التوصيل؟</b><div class="up-row">' + others.map(card).join('') + '</div></div>';
+  };
+
   /** Promo code: checked by the Order API; the server checks it again when the order is placed. */
   api.promo = getPromo;
   api.clearPromo = function () { setPromo(null); };
