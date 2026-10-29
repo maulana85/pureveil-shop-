@@ -4,7 +4,7 @@
  * The server (Order API JO) recomputes every price; this file only displays them. */
 (function () {
   var KEY = 'pv_jo_cart_v1', TTL = 3 * 864e5, GKEY = 'pv_jo_gov_v1';
-  var API = 'JO_ORDER_API_URL';
+  var API = 'https://script.google.com/macros/s/AKfycbyYF-qbK6z-gjKINzIiSQycFdAIwYJ6jNtxYY1oOnWeuAnpRzuhjZCNlzHOU3U_kHz5cg/exec';
   var GROUPS = {
     A: { tiers: [0, 4, 7, 10, 10], old: [0, 4, 8, 12, 16], extra: 2.5 }
   };
