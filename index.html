@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ar_JO">
 <meta property="og:site_name" content="Pure Veil">
-<meta property="og:title" content="Pure Veil الأردن · 3 قطع بـ 10 والرابعة هدية 🎁">
+<meta property="og:title" content="Pure Veil الأردن · مودال وشيفون بعروض 🎁">
 <meta property="og:description" content="مودال تايلندي وإسفنجي ومكسّر وفروزن. اختاري ألوانك والدفع عند الاستلام 👇">
 <meta property="og:image" content="https://pureveiljo.com/thai/og.jpg">
 <meta property="og:url" content="https://pureveiljo.com/">
@@ -30,6 +30,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 .offer{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-variant-numeric:tabular-nums}
 .offer div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center;display:grid}
 .offer b{font:600 12.5px var(--display);color:var(--muted)}.offer strong{font:700 17px var(--display)}
+.offer.three{grid-template-columns:repeat(3,1fr)}
+.sec{margin:6px 0 -6px;font:700 18px var(--display);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.sec small{font:500 13px var(--body);color:var(--muted)}
 .offer .best{border:2px solid var(--accent);background:#f0e3ec}.offer .best small{color:var(--ok);font-weight:700;font-size:11.5px}
 .note{margin:-6px 0 0;text-align:center;font-size:13.5px;color:var(--accent);font-weight:600}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -47,9 +49,10 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 <div class="wrap">
   <section class="hero">
     <span class="brand">PURE VEIL · JORDAN 🇯🇴</span>
-    <h1>3 قطع مودال بـ 10 دنانير، والرابعة هدية</h1>
-    <p>اختاري ألوانك من الصور وخلطي بين الأنواع زي ما بدك. الدفع عند الاستلام.</p>
+    <h1>حجابات Pure Veil بالأردن</h1>
+    <p>اختاري ألوانك من الصور، والدفع عند الاستلام. التوصيل مرة وحدة على الطلب كله.</p>
   </section>
+  <h2 class="sec">عرض المودال <small>بتقدري تخلطي بين الأنواع</small></h2>
   <div class="offer">
     <div><b>قطعة</b><strong>4</strong></div>
     <div><b>قطعتين</b><strong>7</strong></div>
@@ -57,7 +60,15 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <div class="best"><b>4 قطع</b><strong>10</strong><small>الرابعة هدية</small></div>
   </div>
   <p class="note">الأسعار بالدينار · بعد الأربعة كل قطعة بـ 2.5 دينار</p>
-  <div class="grid" id="grid"></div>
+  <div class="grid" id="gridA"></div>
+  <h2 class="sec">عرض الشيفون مع قمطة</h2>
+  <div class="offer three">
+    <div><b>قطعة</b><strong>5</strong></div>
+    <div><b>قطعتين</b><strong>8</strong></div>
+    <div class="best"><b>3 قطع</b><strong>10</strong><small>وفّري 5</small></div>
+  </div>
+  <p class="note">الأسعار بالدينار · بعد الثلاثة كل قطعة بـ 3 دنانير</p>
+  <div class="grid" id="gridB"></div>
   <div class="info">
     <div><span>🚚 التوصيل داخل عمّان</span><span>2.5 دينار</span></div>
     <div><span>🚚 التوصيل للمحافظات</span><span>3 دنانير</span></div>
@@ -66,15 +77,17 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
   </div>
   <footer>Pure Veil · الأردن</footer>
 </div>
-<script src="cart.js?v=2"></script>
+<script src="cart.js?v=3"></script>
 <script>
 const M = PVCart.MODELS;
-document.getElementById('grid').innerHTML = ['TH', 'SP', 'MK', 'FR'].map(k => {
+const card = k => {
   const x = M[k];
   return x.soon
     ? `<span class="p soon"><img src="thai/model.jpg" alt=""><span>${x.name}<small>قريباً</small></span></span>`
     : `<a class="p" href="${x.path}/"><img src="${x.img}" alt="${x.name}"><span>${x.name}<small>اطلبي ←</small></span></a>`;
-}).join('');
+};
+document.getElementById('gridA').innerHTML = ['TH', 'SP', 'MK', 'FR'].map(card).join('');
+document.getElementById('gridB').innerHTML = ['CH'].map(card).join('');
 </script>
 </body>
 </html>

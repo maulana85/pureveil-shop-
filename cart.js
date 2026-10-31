@@ -6,16 +6,19 @@
   var KEY = 'pv_jo_cart_v1', TTL = 3 * 864e5, GKEY = 'pv_jo_gov_v1';
   var API = 'https://script.google.com/macros/s/AKfycbyYF-qbK6z-gjKINzIiSQycFdAIwYJ6jNtxYY1oOnWeuAnpRzuhjZCNlzHOU3U_kHz5cg/exec';
   var GROUPS = {
-    A: { tiers: [0, 4, 7, 10, 10], old: [0, 4, 8, 12, 16], extra: 2.5 }
+    A: { tiers: [0, 4, 7, 10, 10], old: [0, 4, 8, 12, 16], extra: 2.5, label: 'أنواع المودال' },
+    // Chiffon with qamta: 1 = 5, 2 = 8, 3 = 10 JOD, then 3 JOD per extra piece (owner, 31/10/2026). Not mixed with modal.
+    B: { tiers: [0, 5, 8, 10], old: [0, 5, 10, 15], extra: 3 }
   };
   // Keys are the Model Code column of the 'products' sheet.
   var MODELS = {
     'TH': { name: 'مودال تايلندي', path: 'thai',     g: 'A', img: 'thai/model.jpg' },
     'SP': { name: 'مودال إسفنجي',  path: 'sponge',   g: 'A', img: 'sponge/model.jpg', soon: true },
     'MK': { name: 'مودال مكسّر',   path: 'mukassar', g: 'A', img: 'mukassar/model.jpg', soon: true },
-    'FR': { name: 'مودال فروزن',   path: 'frozen',   g: 'A', img: 'frozen/model.jpg', soon: true }
+    'FR': { name: 'مودال فروزن',   path: 'frozen',   g: 'A', img: 'frozen/model.jpg', soon: true },
+    'CH': { name: 'شيفون سوفت مع قمطة', path: 'chiffon', g: 'B', img: 'chiffon/model.jpg' }
   };
-  var ORDER = ['TH', 'SP', 'MK', 'FR'];
+  var ORDER = ['TH', 'CH', 'SP', 'MK', 'FR'];
   // Governorate value = the English name the Orders sheet and the courier already use; label = Arabic.
   var GOVS = [['Amman', 'عمّان'], ['Zarqa', 'الزرقاء'], ['Irbid', 'إربد'], ['Balqa', 'البلقاء (السلط)'], ['Madaba', 'مادبا'],
     ['Mafraq', 'المفرق'], ['Jerash', 'جرش'], ['Ajloun', 'عجلون'], ['Karak', 'الكرك'], ['Tafila', 'الطفيلة'], ['Maan', 'معان'], ['Aqaba', 'العقبة']];
@@ -53,7 +56,7 @@
   function gprice(g, q) { return price(GROUPS[g].tiers, q, GROUPS[g].extra); }
   function sum(o) { return Object.keys(o || {}).reduce(function (a, n) { return a + o[n]; }, 0); }
   function num(n) { return (Math.round(n * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
-  function fmt(n) { return num(n) + ' دينار'; }
+  function fmt(n) { var r = Math.round(n * 100) / 100; return num(n) + (r >= 3 && r <= 10 && r === Math.floor(r) ? ' دنانير' : ' دينار'); }
   function unit(q) { return q === 1 ? 'قطعة' : q === 2 ? 'قطعتين' : q + ' قطع'; }
 
   var api = {
@@ -92,7 +95,7 @@
       if (q >= n) return 'وفّرتي ' + fmt(price(G.old, q) - gprice(g, q)) + ' 🎉 وكل قطعة زيادة بـ ' + fmt(G.extra);
       var left = n - q, add = gprice(g, n) - gprice(g, q);
       if (!add) return 'القطعة الرابعة هدية 🎁 اختاري لونها من أي نوع';
-      return 'زيدي ' + (left === 1 ? 'قطعة وحدة' : unit(left)) + ' من أي نوع بـ ' + fmt(add) + ' بس 🎁';
+      return 'زيدي ' + (left === 1 ? 'قطعة وحدة' : unit(left)) + (G.label ? ' من أي نوع' : '') + ' بـ ' + fmt(add) + ' بس 🎁';
     },
     /** Lines of the other products already in the cart (for the current page). */
     othersHTML: function (m) {
@@ -131,11 +134,11 @@
       var left = n - q, add = gprice(g, n) - gprice(g, q);
       return '<div class="upsell"><b>🎁 ' + (!add ? 'القطعة الرابعة إلك هدية! اختاري لونها'
           : 'زيدي ' + (left === 1 ? 'قطعة وحدة' : unit(left)) + ' بـ ' + fmt(add) + ' بس') + '</b>'
-        + '<small>وبيصير عندك ' + unit(n) + ' بـ ' + fmt(gprice(g, n)) + '، والتوصيل نفسه. بتقدري تخلطي بين الأنواع.</small>'
+        + '<small>وبيصير عندك ' + unit(n) + ' بـ ' + fmt(gprice(g, n)) + '، والتوصيل نفسه.' + (G.label ? ' بتقدري تخلطي بين الأنواع.' : '') + '</small>'
         + '<div class="up-row"><a class="up-p up-here" href="#pick"><span>⬆ من نفس الألوان</span></a>' + same.map(card).join('') + '</div></div>';
     }
     return '<div class="upsell"><b>🎉 كمّلتي العرض! هلأ كل قطعة زيادة بـ ' + fmt(G.extra) + ' بس</b>'
-      + '<small>بنفس التوصيل، ومن أي نوع.</small>'
+      + '<small>بنفس التوصيل' + (G.label ? '، ومن أي نوع' : '') + '.</small>'
       + '<div class="up-row"><a class="up-p up-here" href="#pick"><span>⬆ من نفس الألوان</span></a>' + same.map(card).join('') + '</div></div>';
   };
 
@@ -212,7 +215,8 @@
   function ladderNote() {
     var m = curModel(), lad = document.getElementById('ladder');
     if (!m || !lad || document.getElementById('pvExtra')) return;
-    var G = GROUPS[MODELS[m].g], p = el('p', '', 'وبعد الأربعة: كل قطعة زيادة بـ <b>' + fmt(G.extra) + '</b> بس · وبتقدري تخلطي بين أنواع المودال');
+    var G = GROUPS[MODELS[m].g], n = G.tiers.length - 1;
+    var p = el('p', '', 'وبعد ' + (n === 4 ? 'الأربعة' : n === 3 ? 'الثلاثة' : unit(n)) + ': كل قطعة زيادة بـ <b>' + fmt(G.extra) + '</b> بس' + (G.label ? ' · وبتقدري تخلطي بين ' + G.label : ''));
     p.id = 'pvExtra'; p.style.cssText = 'margin:8px 4px 0;text-align:center;font-size:14px;color:#6e3b5e;font-weight:600';
     lad.parentNode.insertBefore(p, lad.nextSibling);
   }
