@@ -239,7 +239,7 @@
   api.offerHTML = function (m) {
     var g = MODELS[m].g, G = GROUPS[g], t = G.tiers, n = t.length - 1;
     var cells = [1, 2, 3, 4].map(function (q) {
-      return q === n ? '<div class="g"><b>' + unit(q) + '</b><strong>' + num(t[q]) + '</strong><small>الرابعة ببلاش 🎁</small></div>'
+      return q === n ? '<div class="g"><b>' + unit(n - 1) + ' + 🎁</b><strong>' + num(t[q]) + '</strong><small>والرابعة هدية</small></div>'
         : '<div><b>' + unit(q) + '</b><strong>' + num(t[q]) + '</strong><small style="visibility:hidden">.</small></div>';
     }).join('');
     var ex = [n + 1, n + 2, n + 4].map(function (q) { return '<span>' + unit(q) + ' = ' + fmt(gprice(g, q)) + '</span>'; }).join('');
