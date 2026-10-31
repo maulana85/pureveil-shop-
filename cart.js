@@ -14,7 +14,7 @@
   var MODELS = {
     'TH': { name: 'مودال تايلندي', path: 'thai',     g: 'A', img: 'thai/model.jpg' },
     'SP': { name: 'مودال إسفنجي',  path: 'sponge',   g: 'A', img: 'sponge/model.jpg' },
-    'MK': { name: 'مودال مكسّر',   path: 'mukassar', g: 'A', img: 'mukassar/model.jpg', soon: true },
+    'MK': { name: 'مودال مكسّر',   path: 'mukassar', g: 'A', img: 'mukassar/model.jpg' },
     'FR': { name: 'مودال فروزن',   path: 'frozen',   g: 'A', img: 'frozen/model.jpg', soon: true },
     'CH': { name: 'شيفون سوفت مع قمطة', path: 'chiffon', g: 'B', img: 'chiffon/model.jpg' }
   };
