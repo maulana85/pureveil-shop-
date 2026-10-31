@@ -53,13 +53,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <p>اختاري ألوانك من الصور، والدفع عند الاستلام. التوصيل مرة وحدة على الطلب كله.</p>
   </section>
   <h2 class="sec">عرض المودال <small>بتقدري تخلطي بين الأنواع</small></h2>
-  <div class="offer">
-    <div><b>قطعة</b><strong>4</strong></div>
-    <div><b>قطعتين</b><strong>7</strong></div>
-    <div><b>3 قطع</b><strong>10</strong></div>
-    <div class="best"><b>4 قطع</b><strong>10</strong><small>الرابعة هدية</small></div>
-  </div>
-  <p class="note">الأسعار بالدينار · بعد الأربعة كل قطعة بـ 2.5 دينار</p>
+  <div id="offerA"></div>
   <div class="grid" id="gridA"></div>
   <h2 class="sec">عرض الشيفون مع قمطة</h2>
   <div class="offer three">
@@ -77,7 +71,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
   </div>
   <footer>Pure Veil · الأردن</footer>
 </div>
-<script src="cart.js?v=3"></script>
+<script src="cart.js?v=4"></script>
 <script>
 const M = PVCart.MODELS;
 const card = k => {
@@ -86,6 +80,7 @@ const card = k => {
     ? `<span class="p soon"><img src="thai/model.jpg" alt=""><span>${x.name}<small>قريباً</small></span></span>`
     : `<a class="p" href="${x.path}/"><img src="${x.img}" alt="${x.name}"><span>${x.name}<small>اطلبي ←</small></span></a>`;
 };
+document.getElementById('offerA').outerHTML = PVCart.offerHTML('TH');
 document.getElementById('gridA').innerHTML = ['TH', 'SP', 'MK', 'FR'].map(card).join('');
 document.getElementById('gridB').innerHTML = ['CH'].map(card).join('');
 </script>

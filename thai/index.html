@@ -172,7 +172,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
     <div class="cap">
       <span class="bf">🎁 عرض المودال · 🇯🇴 الأردن</span>
       <h1>3 قطع تايلندي بـ 10 دنانير، والرابعة هدية</h1>
-      <p>مودال ناعم وثابت، 47 لون. وبتقدري تخلطي مع الإسفنجي والمكسّر والفروزن بنفس العرض.</p>
+      <p>مودال ناعم وثابت، 47 لون. وبعد الأربعة كل قطعة بـ 2 دينار بس.</p>
     </div>
   </section>
   <div class="infobar"><span>🚚 عمّان 2.5 · المحافظات 3 دنانير</span><span>💵 الدفع عند الاستلام</span><span>⚡ على الكمية الموجودة بس</span></div>
@@ -212,7 +212,7 @@ footer{text-align:center;font-size:12px;color:var(--muted)}
 </div></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="../cart.js?v=3"></script>
+<script src="../cart.js?v=4"></script>
 <script>
 const API = PVCart.API;
 const MODEL = 'TH';
@@ -246,10 +246,7 @@ const sel = PVCart.get(MODEL);
 let stock = null;
 const params = new URLSearchParams(location.search);
 
-$('ladder').classList.add('five', 'four');
-$('ladder').innerHTML = [4, 1, 2, 3].map(q => q === 4
-  ? `<div class="tier best"><b>${unit(q)}</b><span><strong>${fmt(NEW[q])}</strong> <s>${num(OLD[q])}</s></span><small>وفّري ${fmt(OLD[q] - NEW[q])}</small></div>`
-  : `<div class="tier"><b>${unit(q)}</b>${OLD[q] > NEW[q] ? `<s>${fmt(OLD[q])}</s>` : '<s style="visibility:hidden">0</s>'}<strong>${num(NEW[q])}<i>دينار</i></strong></div>`).join('');
+$('ladder').outerHTML = PVCart.offerHTML(MODEL);
 $('gov').innerHTML = '<option value="">اختاري…</option>' + PVCart.GOVS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
 $('gov').value = PVCart.gov() || '';
 $('gov').addEventListener('change', () => { PVCart.setGov($('gov').value); render(); });

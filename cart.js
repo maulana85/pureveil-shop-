@@ -1,19 +1,19 @@
 /* Pure Veil Jordan — one cart shared by every product page.
- * Every modal type in group A shares one offer (1 = 4, 2 = 7, 3 = 10, 4 = 10 JOD: the 4th is a gift; then 2.5 JOD per extra piece),
+ * Every modal type in group A shares one offer (1 = 4, 2 = 7, 3 = 10, 4 = 10 JOD: the 4th is a gift; then 2 JOD per extra piece, owner 31/10/2026),
  * mixing types is allowed, and delivery is charged once: Amman 2.5 JOD, other governorates 3 JOD.
  * The server (Order API JO) recomputes every price; this file only displays them. */
 (function () {
   var KEY = 'pv_jo_cart_v1', TTL = 3 * 864e5, GKEY = 'pv_jo_gov_v1';
   var API = 'https://script.google.com/macros/s/AKfycbyYF-qbK6z-gjKINzIiSQycFdAIwYJ6jNtxYY1oOnWeuAnpRzuhjZCNlzHOU3U_kHz5cg/exec';
   var GROUPS = {
-    A: { tiers: [0, 4, 7, 10, 10], old: [0, 4, 8, 12, 16], extra: 2.5, label: 'أنواع المودال' },
+    A: { tiers: [0, 4, 7, 10, 10], old: [0, 4, 8, 12, 16], extra: 2, label: 'أنواع المودال' },
     // Chiffon with qamta: 1 = 5, 2 = 8, 3 = 10 JOD, then 3 JOD per extra piece (owner, 31/10/2026). Not mixed with modal.
     B: { tiers: [0, 5, 8, 10], old: [0, 5, 10, 15], extra: 3 }
   };
   // Keys are the Model Code column of the 'products' sheet.
   var MODELS = {
     'TH': { name: 'مودال تايلندي', path: 'thai',     g: 'A', img: 'thai/model.jpg' },
-    'SP': { name: 'مودال إسفنجي',  path: 'sponge',   g: 'A', img: 'sponge/model.jpg', soon: true },
+    'SP': { name: 'مودال إسفنجي',  path: 'sponge',   g: 'A', img: 'sponge/model.jpg' },
     'MK': { name: 'مودال مكسّر',   path: 'mukassar', g: 'A', img: 'mukassar/model.jpg', soon: true },
     'FR': { name: 'مودال فروزن',   path: 'frozen',   g: 'A', img: 'frozen/model.jpg', soon: true },
     'CH': { name: 'شيفون سوفت مع قمطة', path: 'chiffon', g: 'B', img: 'chiffon/model.jpg' }
@@ -220,6 +220,39 @@
     p.id = 'pvExtra'; p.style.cssText = 'margin:8px 4px 0;text-align:center;font-size:14px;color:#6e3b5e;font-weight:600';
     lad.parentNode.insertBefore(p, lad.nextSibling);
   }
+  /** Offer box replacing the page's #ladder for a group whose last piece is free (modal: 3 + 1 gift). */
+  var OCSS = '.pvo{background:var(--surface,#fff);border:2px solid var(--accent,#6e3b5e);border-radius:18px;padding:16px 14px;display:grid;gap:12px;text-align:center;font-variant-numeric:tabular-nums}'
+    + '.pvo h2{margin:0;font:800 21px/1.3 var(--display,inherit);color:var(--ink,#2a2229)}.pvo h2 em{font-style:normal;color:#b8326a}'
+    + '.pvo-eq{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;direction:rtl}'
+    + '.pvo-pc{width:40px;height:48px;border-radius:10px;background:var(--accent,#6e3b5e);color:#fff;display:grid;place-items:center;font:700 15px var(--display,inherit)}'
+    + '.pvo-pc.gift{background:#f6c445;color:#5a3a00;font-size:20px;box-shadow:0 0 0 3px #fff3c4}'
+    + '.pvo-op{font:700 18px var(--display,inherit);color:var(--muted,#7a6d77)}'
+    + '.pvo-eq strong{font:800 26px var(--display,inherit);color:var(--ink,#2a2229)}.pvo-eq s{color:var(--muted,#7a6d77);font-size:15px;text-decoration-color:#c0392b;text-decoration-thickness:2px}'
+    + '.pvo-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}'
+    + '.pvo-row div{border:1px solid var(--line,#e6dde3);border-radius:12px;padding:8px 2px;display:grid;gap:2px}'
+    + '.pvo-row b{font:600 12.5px var(--display,inherit);color:var(--muted,#7a6d77)}.pvo-row strong{font:800 18px var(--display,inherit)}'
+    + '.pvo-row .g{background:#fff7dc;border-color:#f6c445}.pvo-row .g small{color:#8a5a00;font-weight:700;font-size:11.5px}'
+    + '.pvo-more{background:var(--bg,#f6f3f5);border-radius:12px;padding:10px;display:grid;gap:6px}'
+    + '.pvo-more p{margin:0;font:700 15px var(--display,inherit)}.pvo-more p b{color:#2f7a52;font-size:17px}'
+    + '.pvo-ex{display:flex;justify-content:center;flex-wrap:wrap;gap:6px}.pvo-ex span{background:var(--surface,#fff);border:1px solid var(--line,#e6dde3);border-radius:999px;padding:3px 10px;font-size:13px}'
+    + '.pvo-mix{margin:0;font-size:13.5px;color:var(--accent,#6e3b5e);font-weight:600}';
+  api.offerHTML = function (m) {
+    var g = MODELS[m].g, G = GROUPS[g], t = G.tiers, n = t.length - 1;
+    var cells = [1, 2, 3, 4].map(function (q) {
+      return q === n ? '<div class="g"><b>' + unit(q) + '</b><strong>' + num(t[q]) + '</strong><small>الرابعة ببلاش 🎁</small></div>'
+        : '<div><b>' + unit(q) + '</b><strong>' + num(t[q]) + '</strong><small style="visibility:hidden">.</small></div>';
+    }).join('');
+    var ex = [n + 1, n + 2, n + 4].map(function (q) { return '<span>' + unit(q) + ' = ' + fmt(gprice(g, q)) + '</span>'; }).join('');
+    var names = ORDER.filter(function (k) { return MODELS[k].g === g && !MODELS[k].soon; }).map(function (k) { return MODELS[k].name.replace('مودال ', ''); });
+    return '<style>' + OCSS + '</style><div class="pvo" id="ladder">'
+      + '<h2>اشتري 3 قطع، <em>والرابعة هدية 🎁</em></h2>'
+      + '<div class="pvo-eq"><span class="pvo-pc">1</span><span class="pvo-pc">2</span><span class="pvo-pc">3</span><span class="pvo-op">+</span>'
+      + '<span class="pvo-pc gift">🎁</span><span class="pvo-op">=</span><strong>' + fmt(t[n]) + '</strong><s>' + fmt(G.old[n]) + '</s></div>'
+      + '<div class="pvo-row">' + cells + '</div>'
+      + '<div class="pvo-more" id="pvExtra"><p>وبعد الأربعة: كل قطعة زيادة بـ <b>' + fmt(G.extra) + '</b> بس</p><div class="pvo-ex">' + ex + '</div></div>'
+      + (G.label ? '<p class="pvo-mix">بتقدري تخلطي بين ' + names.join(' و') + ' بنفس العرض</p>' : '')
+      + '</div>';
+  };
   function boot() { buildUI(); refreshUI(); ladderNote(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   window.addEventListener('pageshow', refreshUI);
